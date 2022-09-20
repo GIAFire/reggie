@@ -10,11 +10,14 @@ import com.wjb.reggie.common.SmsTemplate;
 import com.wjb.reggie.domain.User;
 import com.wjb.reggie.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpSession;
+import java.time.Duration;
 import java.util.Map;
 
 @RestController
@@ -25,6 +28,8 @@ public class UserController {
 
     @Autowired
     private SmsTemplate smsTemplate;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     // 发送短信
     @PostMapping("/user/sendMsg")
@@ -34,7 +39,7 @@ public class UserController {
         // 2.生成6位随机数
          String code = RandomUtil.randomNumbers(4);
 //        String code = "123"; // TODO 开发期验证写死，上线修改回来
-        session.setAttribute("phone_sms:" + phone, code); // session中存储
+        redisTemplate.opsForValue().set("phone_sms:"+phone,code, Duration.ofMinutes(5));
         // 3.调用第三方接口发送
         // smsTemplate.sendSms(phone, code); // TODO 开发期不做短信发送，上线修改回来
         // 4.返回成功
@@ -51,9 +56,8 @@ public class UserController {
         // 1.接收请求参数：手机号和验证码
         String phone = param.get("phone");
         String code = param.get("code");
-        // TODO 在学习redis之前 我们的验证码判断 暂时在controller中解决
-        String codeFromSession = (String) session.getAttribute("phone_sms:" + phone);
-        if (!StrUtil.equals(code, codeFromSession)) {
+        String codeFromRedis = (String) redisTemplate.opsForValue().get("phone_sms:" + phone);
+        if (!StrUtil.equals(code, codeFromRedis)) {
             throw new CustomException("验证码不一致.....");
         }
 
