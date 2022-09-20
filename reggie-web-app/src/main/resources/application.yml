@@ -1,0 +1,31 @@
+server:
+  port: 8081
+spring:
+  application:
+    name: reggie-web-app # 应用名称
+  servlet:
+    multipart:
+      max-request-size: 100MB # 最大请求文件大小,默认10MB
+      max-file-size: 10MB # 单个请求文件大小,默认1MB
+  datasource: # 数据源配置
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://localhost:3306/reggie?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: root
+      password: root
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  mapper-locations: classpath:/mappers/**.xml
+  global-config:
+    db-config:
+      id-type: ASSIGN_ID # id生成策略类型
+
+#reggie:
+#  sms:
+#    key: LTAI5tNmH22y9C7AxdFEgdNv
+#    secret: AHGC0JSnBuYtYg3BnNvyTuwlwyl27n
+#    sign-name: 瑞吉点餐
+#    template-code: SMS_170836451

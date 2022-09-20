@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjb.reggie.mapper.EmployeeMapper">
+
+    <!--注意：  name在前、 username在后 -->
+    <insert id="save">
+        insert into employee
+        values(
+          #{id},
+          #{name},
+          #{username},
+          #{password},
+          #{phone},
+          #{sex},
+          #{idNumber},
+          #{status},
+          #{createTime},
+          #{updateTime},
+          #{createUser},
+          #{updateUser}
+        )
+    </insert>
+
+    <!--只有字符串类型，才需要判断非空串...-->
+    <update id="update">
+        update employee
+        <set>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="sex!=null and sex!=''">
+                sex=#{sex},
+            </if>
+            <if test="idNumber!=null and idNumber!=''">
+                id_number=#{idNumber},
+            </if>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime},
+            </if>
+            <if test="updateUser!=null">
+                update_user=#{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="findByUsername" resultType="com.wjb.reggie.domain.Employee">
+        select * from employee where username = #{username}
+    </select>
+    <select id="findByName" resultType="com.wjb.reggie.domain.Employee">
+        select * from employee
+        <where>
+            <if test="name!=null and name!=''">
+                name like CONCAT('%',#{name},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="findById" resultType="com.wjb.reggie.domain.Employee">
+        select * from employee where id = #{id}
+    </select>
+</mapper>

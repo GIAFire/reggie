@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wjb.reggie.mapper.CategoryMapper">
+    <insert id="save">
+        insert into category
+        values(
+            #{id},
+            #{type},
+            #{name},
+            #{sort},
+            #{createTime},
+            #{updateTime},
+            #{createUser},
+            #{updateUser}
+        )
+    </insert>
+
+    <update id="update">
+        update category
+        <set>
+            <if test="type != null">
+                type = #{type},
+            </if>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <select id="findAll" resultType="com.wjb.reggie.domain.Category">
+        select * from category order by sort asc
+    </select>
+
+    <select id="countDishByCategoryId" resultType="java.lang.Integer">
+          SELECT COUNT(*) FROM dish WHERE category_id = #{id}
+    </select>
+
+    <select id="countSetmealByCategoryId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM setmeal WHERE category_id = #{id}
+    </select>
+
+    <delete id="delete">
+        delete from category where id = #{id}
+    </delete>
+</mapper>
